@@ -1,0 +1,28 @@
+package isa 
+
+type InstructionType byte
+
+const (
+	INST_PUSH InstructionType = iota
+	INST_POP
+	INST_ADD
+	INST_MINUS
+	INST_MUL
+	INST_DIV
+	INST_EQ
+	INST_NEQ
+	INST_LS
+	INST_GR
+	INST_GREQ
+	INST_LSEQ
+	INST_DUP
+	INST_JMP
+	INST_JMPZ
+	INST_SWAP
+	INST_STORE
+	INST_LOAD
+	INST_CALL
+	INST_RETURN
+	INST_HALT
+	INST_NONE
+)

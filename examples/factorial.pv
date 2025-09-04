@@ -1,0 +1,21 @@
+#This program demonstrates the calculation of 5 factorial.
+
+PUSH 5
+
+CALL factorial
+HALT
+
+factorial:
+  DUP
+  JMPZ base_case
+  DUP
+  PUSH 1
+  MINUS
+  CALL factorial
+  MUL
+  RETURN
+
+base_case:
+  POP
+  PUSH 1
+  RETURN

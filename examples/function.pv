@@ -1,0 +1,23 @@
+#This contains an example of a function
+
+PUSH 1
+PUSH 2
+CALL add
+HALT
+
+add:
+  ADD
+
+  PUSH 5
+  PUSH 2
+  
+  CALL minus
+  POP
+
+  RETURN
+
+minus:
+  SWAP
+  MINUS
+  PUSH 0
+  RETURN
