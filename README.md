@@ -17,7 +17,7 @@ It includes:
 
 ### Build
 ```cmd
-git clone https://github.com/kosper/pauvm
+git clone https://github.com/kosper/pauvm.git
 cd pauvm
 cd build
 build_all.bat
