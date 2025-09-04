@@ -50,7 +50,7 @@ type VM struct {
 	totalInstructions int32
 
 	stack [stackSize]int32
-	stackIndex int32 //TODO: Change to sp from stackIndex.
+	sp int32
 	
 	frames [frameStackSize]Frame	
 	fp int32

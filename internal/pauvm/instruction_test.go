@@ -18,7 +18,7 @@ func TestPUSH(t *testing.T) {
 
 	pauVM.ExecuteProgram()
 
-	sp := pauVM.stackIndex - 1
+	sp := pauVM.sp
 	result := pauVM.stack[sp]
 
 	if result != 5 {
@@ -40,7 +40,7 @@ func TestADD(t *testing.T) {
 
 	pauVM.ExecuteProgram()
 
-	sp := pauVM.stackIndex - 1
+	sp := pauVM.sp
 	result := pauVM.stack[sp]
 
 	if result != 7 {
@@ -62,7 +62,7 @@ func TestMINUS(t *testing.T) {
 
 	pauVM.ExecuteProgram()
 
-	sp := pauVM.stackIndex - 1
+	sp := pauVM.sp
 	result := pauVM.stack[sp]
 
 	if result != 3 {
@@ -84,7 +84,7 @@ func TestMUL(t *testing.T) {
 
 	pauVM.ExecuteProgram()
 
-	sp := pauVM.stackIndex - 1
+	sp := pauVM.sp
 	result := pauVM.stack[sp]
 
 	if result != 10 { 
@@ -106,7 +106,7 @@ func TestDIV(t *testing.T) {
 
 	pauVM.ExecuteProgram()
 
-	sp := pauVM.stackIndex - 1
+	sp := pauVM.sp
 	result := pauVM.stack[sp]
 
 	if result != 2 { 
@@ -128,7 +128,7 @@ func TestEQ(t *testing.T) {
 
 	pauVM.ExecuteProgram()
 
-	sp := pauVM.stackIndex - 1
+	sp := pauVM.sp
 	result := pauVM.stack[sp]
 
 	if result != 1 { 
@@ -150,7 +150,7 @@ func TestNEQ(t *testing.T) {
 
 	pauVM.ExecuteProgram()
 
-	sp := pauVM.stackIndex - 1
+	sp := pauVM.sp
 	result := pauVM.stack[sp]
 
 	if result != 0 { 
@@ -172,7 +172,7 @@ func TestLS(t *testing.T) {
 
 	pauVM.ExecuteProgram()
 
-	sp := pauVM.stackIndex - 1
+	sp := pauVM.sp
 	result := pauVM.stack[sp]
 
 	if result != 0 { 
@@ -194,7 +194,7 @@ func TestGR(t *testing.T) {
 
 	pauVM.ExecuteProgram()
 
-	sp := pauVM.stackIndex - 1
+	sp := pauVM.sp
 	result := pauVM.stack[sp]
 
 	if result != 1 { 
@@ -216,7 +216,7 @@ func TestGREQ(t *testing.T) {
 
 	pauVM.ExecuteProgram()
 
-	sp := pauVM.stackIndex - 1
+	sp := pauVM.sp
 	result := pauVM.stack[sp]
 
 	if result != 0 { 
@@ -238,7 +238,7 @@ func TestLSEQ(t *testing.T) {
 
 	pauVM.ExecuteProgram()
 
-	sp := pauVM.stackIndex - 1
+	sp := pauVM.sp
 	result := pauVM.stack[sp]
 
 	if result != 0 { 
@@ -259,7 +259,7 @@ func TestDUP(t *testing.T) {
 
 	pauVM.ExecuteProgram()
 
-	sp := pauVM.stackIndex - 1
+	sp := pauVM.sp
 	result := pauVM.stack[sp]
 
 	if result != 5 { 
@@ -281,7 +281,7 @@ func TestSWAP(t *testing.T) {
 
 	pauVM.ExecuteProgram()
 
-	sp := pauVM.stackIndex - 1
+	sp := pauVM.sp
 	result := pauVM.stack[sp]
 
 	if result != 5 { 

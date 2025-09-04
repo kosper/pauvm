@@ -18,7 +18,7 @@ func InitVM(flags *VMFlags) *VM {
 	var pauVM VM = VM{ 
 		ip: 0, 
 		totalInstructions: 0, 
-		stackIndex: 0, 
+		sp: -1, 
 		fp: 0,
 	}
 	
@@ -64,7 +64,7 @@ func (pauVM *VM) PrintProgram() {
 func (pauVM *VM) PrintStack() {
 	fmt.Printf("Stack:\n");
 
-	for i := range pauVM.stackIndex {
+	for i := range pauVM.sp + 1 {
 		fmt.Printf("Address(%v): %v\n", i, pauVM.stack[i]);
 	}
 
@@ -162,6 +162,9 @@ func (pauVM *VM) ExecuteProgram() error {
 				break
 
 			case isa.INST_HALT:
+				if pauVM.Trace == true {
+					fmt.Printf("Inst HALT\n")
+				}
 				return nil
 			
 			case isa.INST_NONE:
