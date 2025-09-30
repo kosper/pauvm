@@ -2,10 +2,14 @@ package pauvm
 
 import (
 	"errors"
+	"os"
+	"fmt"
+
+	"github.com/kosper/pauvm/pkg/isa"
 )
 
 func (pauVM *VM) push() error {
-	if pauVM.sp >= stackSize {
+	if pauVM.sp >= pauVM.stackSize {
 		return errors.New(errorToString[ERROR_STACK_OVERFLOW])
 	}
 	
@@ -82,6 +86,22 @@ func (pauVM *VM) div() error {
 	
 	pauVM.sp--
 	pauVM.stack[pauVM.sp] = (value2 / value1)
+
+	pauVM.ip++
+
+	return nil;
+}
+
+func (pauVM *VM) mod() error {
+	if pauVM.sp < 1 {
+		return errors.New(errorToString[ERROR_STACK_UNDERFLOW])
+	}
+	
+	var value1 int32 = pauVM.stack[pauVM.sp]
+	var value2 int32 = pauVM.stack[pauVM.sp - 1]
+
+	pauVM.sp--
+	pauVM.stack[pauVM.sp] = (value2 % value1)
 
 	pauVM.ip++
 
@@ -229,8 +249,15 @@ func (pauVM *VM) dup() error {
 	return nil;
 }
 
+//TODO: Check if jump is illegal.
 func (pauVM *VM) jmp() error {
-	pauVM.ip = pauVM.program[pauVM.ip].value;
+	var value int32 = pauVM.program[pauVM.ip].value
+
+	if value >= pauVM.totalInstructions {
+		return errors.New(errorToString[ERROR_ILLEGAL_JUMP])
+	}
+
+	pauVM.ip = value;
 
 	return nil
 }
@@ -244,7 +271,13 @@ func (pauVM *VM) jmpz() error {
 	pauVM.sp--;
 
 	if value == 0 {
-		pauVM.ip = pauVM.program[pauVM.ip].value;
+		var address = pauVM.program[pauVM.ip].value;
+
+		if address >= pauVM.totalInstructions {
+			return errors.New(errorToString[ERROR_ILLEGAL_JUMP])
+		}
+
+		pauVM.ip = address;
 	} else {
 		pauVM.ip++
 	}
@@ -278,7 +311,7 @@ func (pauVM *VM)store() error {
 
 	pauVM.sp--;
 
-	if index < 0 || index > localStorageSize {
+	if index < 0 || index > defaultLocalStorageSize {
 		return errors.New("Local storage index out of bounds error")
 	}
 
@@ -293,7 +326,7 @@ func (pauVM *VM)store() error {
 func (pauVM *VM)load() error {
 	var index int32 = pauVM.program[pauVM.ip].value;
 
-	if index < 0 || index > localStorageSize {
+	if index < 0 || index > defaultLocalStorageSize {
 		return errors.New("Local storage index out of bounds error")
 	}
 
@@ -311,8 +344,8 @@ func (pauVM *VM)load() error {
 func (pauVM *VM)call() error {
 	var fp int32 = pauVM.fp
 
-	if fp >= frameStackSize {
-		return errors.New("Framestack overflow.")
+	if fp >= pauVM.callstackSize {
+		return errors.New("Callstack overflow.")
 	}
 
 	pauVM.fp++
@@ -320,8 +353,34 @@ func (pauVM *VM)call() error {
 
 	var label int32 = pauVM.program[pauVM.ip].value
 
+	if label >= pauVM.totalInstructions {
+		return errors.New(errorToString[ERROR_ILLEGAL_JUMP])
+	}
+
 	pauVM.ip = label
 	
+	return nil;
+}
+
+func (pauVM *VM)syscall() error {
+	var call int32 = pauVM.program[pauVM.ip].value;
+	
+	switch isa.Syscall(call) {
+		case isa.SYSCALL_EXIT:
+			if pauVM.sp < 0 {
+				return errors.New("Stack underflow!")
+			}
+
+			var value int32 = pauVM.stack[pauVM.sp]
+			pauVM.sp--;		
+			
+			os.Exit(int(value))
+
+			break;
+		default:
+			var ferror string = fmt.Sprintf("Syscall %d does not exist.", call)
+			return errors.New(ferror)
+	}
 	return nil;
 }
 
@@ -329,7 +388,7 @@ func (pauVM *VM)ret() error {
 	var fp int32 = pauVM.fp
 
 	if fp <= 0 {
-		return errors.New("Framestack underflow.")
+		return errors.New("Callstack underflow.")
 	}
 
 	pauVM.ip = pauVM.frames[fp].returnIp

@@ -7,22 +7,30 @@ import (
 )
 
 func main() {
-	var inputName string
-	var outputName string
 	var mainFile pauven.SourceFile
 
-	//TODO: Flags
-	pauven.HandleArgs(&inputName, &outputName)
-	
-	if err := mainFile.Read(inputName); err != nil {
+	flags, err := pauven.HandleConsoleArgs()
+
+	if err != nil {
 		log.Fatal(err)
 	}
 
-	if err := mainFile.Preprocess(); err != nil {
+	if flags.MainFile == "" {
+		log.Fatal("Main file was not provided.")
+	}
+
+	if err := mainFile.Read(flags.MainFile); err != nil {
 		log.Fatal(err)
 	}
 
-	if err := mainFile.Compile(outputName); err != nil {
+	//TODO: Accept flags.
+	var compiler = pauven.CompilerInit(flags.OutputName)
+
+	if err := compiler.Preprocess(&mainFile); err != nil {
+		log.Fatal(err)
+	}
+
+	if err := compiler.Compile(); err != nil {
 		log.Fatal(err)
 	}
 

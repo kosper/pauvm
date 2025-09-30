@@ -1,20 +1,141 @@
 package pauvm
 
-//TODO: Replace prints with log
-
 import (
 	"fmt"
 	"errors"
 
 	"os"
+	"runtime"
+	"strconv"
 	"io"
 	"encoding/binary"
 
 	"github.com/kosper/pauvm/pkg/isa"
+	"github.com/kosper/pauvm/pkg/utils"
+
 )
 
+func printUsage() {
+	switch runtime.GOOS {
+		case "windows": {
+			var UsageWindows string = "Usage: pauvm.exe <bytecodeFile> [-flags]"
+			fmt.Println(UsageWindows)
+
+			return
+		}
+
+		case "linux": {
+			var UsageLinux string = "Usage: ./pauvm <bytecodeFile> [-flags]"
+			fmt.Println(UsageLinux)
+
+			return
+		}
+
+		default: {
+			var UsageLinux string = "Usage: ./pauvm <bytecodeFile> [-flags]"
+			fmt.Println(UsageLinux)
+
+			return
+		}
+	}
+}
+
+func printHelp() {
+	var helpString string = 
+`PauVM is a stack based virtual machine that executes Pau bytecode.
+Usage:
+	pauvm <bytecode file> [flags]	
+
+The flags are:
+  -help                  Prints the help menu.
+  -stacksize <size>      Changes the size of the stack to the specified size.
+  -trace                 Prints the stack everytime an instruction is executed.
+  -callstacksize <size>  Changes the size of the callstack to the specified size.
+`
+		
+	fmt.Println(helpString)
+}
+
+func HandleConsoleArgs() (*VMFlags, error) {
+	var args []string = os.Args[1:]
+	var argsLen = len(args)
+
+	var flags VMFlags = VMFlags{
+		trace: false,
+		stackSize: defaultStackSize,
+		callstackSize: defaultCallstackSize,
+	}
+
+	if argsLen < 1 {
+		printUsage()
+		os.Exit(0)
+	}
+
+	//Note: Check if first flag is help, if not continue to other flags.
+	if args[0] == "-help" {
+		printHelp()
+		os.Exit(0)
+	}
+
+	flags.Filename = args[0]
+
+	if err := utils.IsFileExtension(flags.Filename, ".pau"); err != nil {
+		return &flags, err
+	}
+
+	//Note: First argument is filename or help flag which is handled.
+	for i := 1; i < argsLen; i++ {
+		//Note: Handle flags.
+		switch args[i] {
+			case "-trace":
+				flags.trace = true
+				continue
+			case "-stacksize":
+				if i + 1 <= len(args) {
+					var ferror string = "Error: Stacksize was not provided" 
+					return &flags, errors.New(ferror)
+				} 
+
+				value, err := strconv.ParseInt(args[i + 1], 10, 32)
+
+				if err != nil {
+					return &flags, err
+				}
+
+				flags.stackSize = int32(value)
+
+				i++
+
+				continue; 
+			case "-callstacksize":
+				if i + 1 <= len(args) {
+					var ferror string = "Error: Stacksize was not provided" 
+					return &flags, errors.New(ferror)
+				}
+
+				value, err := strconv.ParseInt(args[i + 1], 10, 32)
+
+				if err != nil {
+					return &flags, err
+				}
+
+				flags.callstackSize= int32(value)
+
+				i++	
+
+				continue;
+			default:
+				var ferror = fmt.Sprintf("Error: %s flag does not exist.", args[i])
+				return &flags, errors.New(ferror)
+		}
+		
+	}
+
+	return &flags, nil
+}
+
 func InitVM(flags *VMFlags) *VM {
-	//NOTE: These values are already initialized by golang to 0.
+	//Note: These values are already initialized by golang to 0.
 	var pauVM VM = VM{ 
 		ip: 0, 
 		totalInstructions: 0, 
@@ -22,7 +143,12 @@ func InitVM(flags *VMFlags) *VM {
 		fp: 0,
 	}
 	
-	pauVM.Trace = flags.Trace
+	pauVM.trace = flags.trace
+	pauVM.stackSize = flags.stackSize
+	pauVM.callstackSize = flags.callstackSize
+
+	pauVM.stack = make([]int32, flags.stackSize)
+	pauVM.frames = make([]Frame, flags.callstackSize)
 
 	for i := range maxInstructions {
 		pauVM.program[i].inst = isa.INST_NONE
@@ -105,6 +231,9 @@ func (pauVM *VM) ExecuteProgram() error {
 				err = pauVM.div() 
 				break 
 
+			case isa.INST_MOD:
+				err = pauVM.mod() 
+				
 			case isa.INST_EQ:
 				err = pauVM.eq() 
 				break 
@@ -157,12 +286,16 @@ func (pauVM *VM) ExecuteProgram() error {
 				err = pauVM.call()
 				break
 
+			case isa.INST_SYSCALL:
+				err = pauVM.syscall()
+				break
+
 			case isa.INST_RETURN:
 				err = pauVM.ret()
 				break
 
 			case isa.INST_HALT:
-				if pauVM.Trace == true {
+				if pauVM.trace == true {
 					fmt.Printf("Inst HALT\n")
 				}
 				return nil
@@ -178,7 +311,7 @@ func (pauVM *VM) ExecuteProgram() error {
 			return err
 		}
 
-		if pauVM.Trace == true {
+		if pauVM.trace == true {
 			fmt.Printf("Inst %v, Value %v\n", isa.InstToString[inst], val);
 			pauVM.PrintStack()
 		}
@@ -192,6 +325,17 @@ func (pauVM *VM) LoadProgramFromFile(filename string) error {
 	defer file.Close()
 
 	if err != nil {
+		return err
+	}
+
+	//Note: Read header.
+	header, err := utils.ReadHeader(file)
+
+	if err != nil {
+		return err
+	}
+
+	if err = utils.CheckMagicNumber(header); err != nil {
 		return err
 	}
 

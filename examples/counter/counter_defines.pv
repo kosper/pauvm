@@ -1,0 +1,6 @@
+#defines
+
+#this is a test example.
+!def n 10
+!def l      n
+!def m l

@@ -23,6 +23,14 @@ cd build
 build_all.bat
 ```
 
+Or
+
+```cmd
+git clone https://github.com/kosper/pauvm.git
+cd pauvm
+go build ./...
+```
+
 ### Run Example(counter)
 ```cmd
 cd bin
@@ -69,15 +77,32 @@ cd bin
 pauven.exe -f ../examples/factorial.pv -o ../examples/factorial.pau
 pauvm.exe ../examples/factorial.pau -trace
 ```
-
 ---
 
 ### Testing 
-Unit and integration tests are included. Run with:
+Unit tests are included. Run with:
 ```cmd
 cd build
 run_tests.exe
+```
 
+Or
+
+```cmd
+go test ./...
+```
+
+### Build And Running A Docker Image
+
+```cmd
+cd pauvm
+docker build -t pauvm .
+```
+
+After building the image, you can execute, compile or dissassemble bytecode by mounting the examples directory.
+
+```cmd
+docker run --rm -v ./examples:/examples pauvm pauvm examples/counter/counter.pau -trace
 ```
 
 ---
@@ -85,18 +110,23 @@ run_tests.exe
 ### Roadmap
 - [ ] Documentation (IMPORTANT)
 - [ ] Unit Tests.
-- [ ] Linux build files.
+- [X] Linux build files(NOTE: exist but not commited yet).
 - [ ] Implement Debugger
-- [ ] Support including files in source code
-- [ ] Handle arguments from console.
-- [ ] Support aliases for values(macros)
-- [ ] Native function calls/Syscalls
-- [ ] OS exclusive error messages (e.g. usage right now is only for windows)
-- [ ] CI
-- [ ] Cleaner errors
+- [X] Support including files in source code
+- [X] Handle arguments from console(stack size, callstack size etc).
+- [X] Support aliases for values(macros)
+- [X] Native function calls/Syscalls support
+- [X] Print line on error(Compiler)
+- [X] OS exclusive error messages (e.g. usage right now is only for windows)
+- [X] CI
+- [X] Cleaner errors
 - [ ] Profiling
-- [ ] Add header when compiling to bytecode and design architecture of .pau file
-- [ ] Flags for Compiler-VM-Dissassembler
+- [X] Help flag 
+- [X] Add header when compiling to bytecode and design architecture of .pau file
+- [X] Flags for Compiler-VM-Dissassembler
+- [ ] Data types like int64, int8, floats, doubles etc(NaN Boxing or Not).
+- [ ] Strings
+- [ ] Constant Pool
 
 ---
 

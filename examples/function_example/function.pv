@@ -1,9 +1,10 @@
 #This contains an example of a function
 
-PUSH 1
-PUSH 2
-CALL add
-HALT
+main:
+  PUSH 1
+  PUSH 2
+  CALL add
+  HALT
 
 add:
   ADD

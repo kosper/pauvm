@@ -1,0 +1,8 @@
+#This is an include test
+
+!include ../examples/counter/counter_defines.pv
+
+!def p terminates
+
+terminates:
+  HALT

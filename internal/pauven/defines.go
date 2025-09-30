@@ -1,47 +1,133 @@
 package pauven
 
 import (
-	"log"
+	"fmt"
 	"os"
+	"runtime"
+	"errors"
 
 	"github.com/kosper/pauvm/pkg/utils"
 )
 
-const Usage string = "Usage: pauven.exe -f <filename> [-o <fileoutput>]"
-
-type SourceFile struct {
-	content string
-	formattedContent string
-
-	labels map[string]int32
+type CompilerFlags struct {
+	MainFile string
+	OutputName string
 }
 
-func HandleArgs(inputName *string, outputName *string) {
-	var osArgs []string = os.Args[1:]
+type Compiler struct {
+	labels map[string]int32
+	globalLabelOffset int32
 
-	if len(osArgs) < 2 || osArgs[0] != "-f" {
-		log.Println(Usage)
-		os.Exit(-1)	
-	}
+	macros map[string]string
 
-	*inputName = osArgs[1]
-	*outputName = "out.pau"
+	sourceFiles []SourceFile
 
-	if utils.IsFileExtension(*inputName, "pv") == false {
-		log.Println("File input name should be of extension .pv")
-		os.Exit(-1)
-	}
+	CompilerFlags
+}
 
-	if len(osArgs) > 3 {
-		if osArgs[2] == "-o" {
-			*outputName = osArgs[3]	
+type SourceFile struct {
+	filename string
+	content string
+}
 
-			if utils.IsFileExtension(*outputName, "pau") == false {
-				log.Println("File output name should be of extension .pau")
-				os.Exit(-1)
-			}
+func printUsage() {
+	switch runtime.GOOS {
+		case "windows": {
+			var UsageWindows string = "Usage: pauven.exe -f <filename> [-o <fileoutput>]"
+			fmt.Println(UsageWindows)
+
+			return
+		}
+
+		case "linux": {
+			var UsageLinux string = "Usage: ./pauven.exe -f <filename> [-o <fileoutput>]"
+			fmt.Println(UsageLinux)
+
+			return
+		}
+
+		default: {
+			var UsageLinux string = "Usage: ./pauven.exe -f <filename> [-o <fileoutput>]"
+			fmt.Println(UsageLinux)
+
+			return
 		}
 	}
+}
 
-	return
+func printHelp() {
+	//Note: This is a multiline string, formattinf is weird.
+	var helpString = 
+`Pauven is a program that turns Pau bytecode into a PauVM ececutable
+
+Usage:
+  pauven -f <paufile> -o <output>
+`
+	fmt.Println(helpString)
+}
+
+func HandleConsoleArgs() (*CompilerFlags, error){
+	var osArgs []string = os.Args[1:]
+	var osArgsLen int = len(osArgs)
+
+	var flags CompilerFlags = CompilerFlags{
+		MainFile: "",
+		OutputName: "out.pau",
+	}
+
+	if osArgs[0] == "-help" {
+		printHelp()
+		os.Exit(0)	
+	}
+
+	for i:= 0; i < osArgsLen; i++ {
+		switch osArgs[i] {
+			case "-o":
+				//Note: -o flag requires filename.
+				var nextIndex int = i + 1
+
+				//Note: If there is no next flag return error.
+				if nextIndex >= osArgsLen {
+					var ferror string = fmt.Sprintf("Error: output name was not provided")
+					return &flags, errors.New(ferror)
+				}
+				
+				flags.OutputName = osArgs[nextIndex]
+
+				if err := utils.IsFileExtension(flags.OutputName, ".pau"); err != nil {
+					return &flags, err
+				}
+
+				//Note: We already handled next index.
+				i++
+
+				continue;
+			case "-f": 
+				//Note: -f flag requires filename.
+				var nextIndex int = i + 1
+
+				//Note: If there is no next flag return error.
+				if nextIndex >= osArgsLen {
+					var ferror string = fmt.Sprintf("Error: main file was not provided")
+					return &flags, errors.New(ferror)
+				}
+
+				flags.MainFile = osArgs[nextIndex]
+
+				if err := utils.IsFileExtension(flags.MainFile, ".pv"); err != nil {
+					return &flags, err
+				}
+
+				//Note: We already handled next index.
+				i++
+
+				continue;
+			default:
+				var ferror string = fmt.Sprintf("Error: Flag %s does not exist", osArgs[i])
+				return &flags, errors.New(ferror)
+		}
+
+	}
+
+	return &flags, nil
 }

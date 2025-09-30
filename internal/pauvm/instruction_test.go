@@ -7,8 +7,10 @@ import (
 
 //TODO: Better testing, test all instructions, test edge cases.
 func TestPUSH(t *testing.T) {
-	var flags VMFlags = VMFlags {
-		Trace: false,
+	var flags VMFlags = VMFlags{
+		trace: false,
+		stackSize: defaultStackSize,
+		callstackSize: defaultCallstackSize,
 	}
 
 	var pauVM *VM = InitVM(&flags)
@@ -26,9 +28,35 @@ func TestPUSH(t *testing.T) {
 	}
 }
 
+func TestPOP(t *testing.T) {
+	var flags VMFlags = VMFlags{
+		trace: false,
+		stackSize: defaultStackSize,
+		callstackSize: defaultCallstackSize,
+	}
+
+	var pauVM *VM = InitVM(&flags)
+
+	pauVM.AddInstruction(INST_PUSH, 5)	
+	pauVM.AddInstruction(INST_PUSH, 2)	
+	pauVM.AddInstruction(INST_POP, 0)	
+	pauVM.AddInstruction(INST_HALT, 0)	
+
+	pauVM.ExecuteProgram()
+
+	sp := pauVM.sp
+	result := pauVM.stack[sp]
+
+	if result != 5 {
+		t.Errorf("Expected 5 got %d", result)
+	}
+}
+
 func TestADD(t *testing.T) {
-	var flags VMFlags = VMFlags {
-		Trace: false,
+	var flags VMFlags = VMFlags{
+		trace: false,
+		stackSize: defaultStackSize,
+		callstackSize: defaultCallstackSize,
 	}
 
 	var pauVM *VM = InitVM(&flags)
@@ -49,8 +77,10 @@ func TestADD(t *testing.T) {
 }
 
 func TestMINUS(t *testing.T) {
-	var flags VMFlags = VMFlags {
-		Trace: false,
+	var flags VMFlags = VMFlags{
+		trace: false,
+		stackSize: defaultStackSize,
+		callstackSize: defaultCallstackSize,
 	}
 
 	var pauVM *VM = InitVM(&flags)
@@ -71,8 +101,10 @@ func TestMINUS(t *testing.T) {
 }
 
 func TestMUL(t *testing.T) {
-	var flags VMFlags = VMFlags {
-		Trace: false,
+	var flags VMFlags = VMFlags{
+		trace: false,
+		stackSize: defaultStackSize,
+		callstackSize: defaultCallstackSize,
 	}
 
 	var pauVM *VM = InitVM(&flags)
@@ -93,8 +125,10 @@ func TestMUL(t *testing.T) {
 }
 
 func TestDIV(t *testing.T) {
-	var flags VMFlags = VMFlags {
-		Trace: false,
+	var flags VMFlags = VMFlags{
+		trace: false,
+		stackSize: defaultStackSize,
+		callstackSize: defaultCallstackSize,
 	}
 
 	var pauVM *VM = InitVM(&flags)
@@ -114,9 +148,36 @@ func TestDIV(t *testing.T) {
 	}
 }
 
+func TestMOD(t *testing.T) {
+	var flags VMFlags = VMFlags{
+		trace: false,
+		stackSize: defaultStackSize,
+		callstackSize: defaultCallstackSize,
+	}
+
+	var pauVM *VM = InitVM(&flags)
+
+	pauVM.AddInstruction(INST_PUSH, 5)	
+	pauVM.AddInstruction(INST_PUSH, 2)	
+	pauVM.AddInstruction(INST_MOD, 0)	
+	pauVM.AddInstruction(INST_HALT, 0)	
+
+	pauVM.ExecuteProgram()
+
+	sp := pauVM.sp
+	result := pauVM.stack[sp]
+
+	if result != 1 { 
+		t.Errorf("Expected 1 got %d", result)
+	}
+
+}
+
 func TestEQ(t *testing.T) {
-	var flags VMFlags = VMFlags {
-		Trace: false,
+	var flags VMFlags = VMFlags{
+		trace: false,
+		stackSize: defaultStackSize,
+		callstackSize: defaultCallstackSize,
 	}
 
 	var pauVM *VM = InitVM(&flags)
@@ -137,8 +198,10 @@ func TestEQ(t *testing.T) {
 }
 
 func TestNEQ(t *testing.T) {
-	var flags VMFlags = VMFlags {
-		Trace: false,
+	var flags VMFlags = VMFlags{
+		trace: false,
+		stackSize: defaultStackSize,
+		callstackSize: defaultCallstackSize,
 	}
 
 	var pauVM *VM = InitVM(&flags)
@@ -159,8 +222,10 @@ func TestNEQ(t *testing.T) {
 }
 
 func TestLS(t *testing.T) {
-	var flags VMFlags = VMFlags {
-		Trace: false,
+	var flags VMFlags = VMFlags{
+		trace: false,
+		stackSize: defaultStackSize,
+		callstackSize: defaultCallstackSize,
 	}
 
 	var pauVM *VM = InitVM(&flags)
@@ -181,8 +246,10 @@ func TestLS(t *testing.T) {
 }
 
 func TestGR(t *testing.T) {
-	var flags VMFlags = VMFlags {
-		Trace: false,
+	var flags VMFlags = VMFlags{
+		trace: false,
+		stackSize: defaultStackSize,
+		callstackSize: defaultCallstackSize,
 	}
 
 	var pauVM *VM = InitVM(&flags)
@@ -203,8 +270,10 @@ func TestGR(t *testing.T) {
 }
 
 func TestGREQ(t *testing.T) {
-	var flags VMFlags = VMFlags {
-		Trace: false,
+	var flags VMFlags = VMFlags{
+		trace: false,
+		stackSize: defaultStackSize,
+		callstackSize: defaultCallstackSize,
 	}
 
 	var pauVM *VM = InitVM(&flags)
@@ -224,9 +293,11 @@ func TestGREQ(t *testing.T) {
 	}
 }
 
-func TestLSEQ(t *testing.T) {
-	var flags VMFlags = VMFlags {
-		Trace: false,
+func Test1SEQ(t *testing.T) {
+	var flags VMFlags = VMFlags{
+		trace: false,
+		stackSize: defaultStackSize,
+		callstackSize: defaultCallstackSize,
 	}
 
 	var pauVM *VM = InitVM(&flags)
@@ -247,8 +318,10 @@ func TestLSEQ(t *testing.T) {
 }
 
 func TestDUP(t *testing.T) {
-	var flags VMFlags = VMFlags {
-		Trace: false,
+	var flags VMFlags = VMFlags{
+		trace: false,
+		stackSize: defaultStackSize,
+		callstackSize: defaultCallstackSize,
 	}
 
 	var pauVM *VM = InitVM(&flags)
@@ -267,9 +340,70 @@ func TestDUP(t *testing.T) {
 	}
 }
 
+func TestJMP(t *testing.T) {
+	var flags VMFlags = VMFlags{
+		trace: false,
+		stackSize: defaultStackSize,
+		callstackSize: defaultCallstackSize,
+	}
+
+	var pauVM *VM = InitVM(&flags)
+
+	pauVM.AddInstruction(INST_PUSH, 5)	
+	pauVM.AddInstruction(INST_JMP, 6)	
+
+	pauVM.AddInstruction(INST_PUSH, 1)	
+	pauVM.AddInstruction(INST_PUSH, 1)	
+	pauVM.AddInstruction(INST_PUSH, 1)	
+	pauVM.AddInstruction(INST_PUSH, 1)	
+
+	pauVM.AddInstruction(INST_HALT, 0)	
+
+	pauVM.ExecuteProgram()
+
+	sp := pauVM.sp
+	result := pauVM.stack[sp]
+
+	if result != 5 { 
+		t.Errorf("Expected 5 got %d", result)
+	}
+}
+
+func TestJMPZ(t *testing.T) {
+	var flags VMFlags = VMFlags{
+		trace: false,
+		stackSize: defaultStackSize,
+		callstackSize: defaultCallstackSize,
+	}
+
+	var pauVM *VM = InitVM(&flags)
+
+	pauVM.AddInstruction(INST_PUSH, 5)	
+	pauVM.AddInstruction(INST_PUSH, 0)	
+	pauVM.AddInstruction(INST_JMPZ, 7)	
+
+	pauVM.AddInstruction(INST_PUSH, 1)	
+	pauVM.AddInstruction(INST_PUSH, 1)	
+	pauVM.AddInstruction(INST_PUSH, 1)	
+	pauVM.AddInstruction(INST_PUSH, 1)	
+
+	pauVM.AddInstruction(INST_HALT, 0)	
+
+	pauVM.ExecuteProgram()
+
+	sp := pauVM.sp
+	result := pauVM.stack[sp]
+
+	if result != 5 { 
+		t.Errorf("Expected 5 got %d", result)
+	}
+}
+
 func TestSWAP(t *testing.T) {
-	var flags VMFlags = VMFlags {
-		Trace: false,
+	var flags VMFlags = VMFlags{
+		trace: false,
+		stackSize: defaultStackSize,
+		callstackSize: defaultCallstackSize,
 	}
 
 	var pauVM *VM = InitVM(&flags)
@@ -278,6 +412,161 @@ func TestSWAP(t *testing.T) {
 	pauVM.AddInstruction(INST_PUSH, 2)	
 	pauVM.AddInstruction(INST_SWAP, 0)	
 	pauVM.AddInstruction(INST_HALT, 0)	
+
+	pauVM.ExecuteProgram()
+
+	sp := pauVM.sp
+	result := pauVM.stack[sp]
+
+	if result != 5 { 
+		t.Errorf("Expected 5 got %d", result)
+	}
+}
+
+func TestSTORE(t *testing.T) {
+	var flags VMFlags = VMFlags{
+		trace: false,
+		stackSize: defaultStackSize,
+		callstackSize: defaultCallstackSize,
+	}
+
+	var pauVM *VM = InitVM(&flags)
+
+	pauVM.AddInstruction(INST_PUSH, 5)	
+	pauVM.AddInstruction(INST_STORE, 1)	
+	pauVM.AddInstruction(INST_HALT, 0)	
+
+	pauVM.ExecuteProgram()
+
+	result := pauVM.frames[0].locals[1]
+
+	if result != 5 { 
+		t.Errorf("Expected 5 got %d", result)
+	}
+}
+
+func TestLOAD(t *testing.T) {
+	var flags VMFlags = VMFlags{
+		trace: false,
+		stackSize: defaultStackSize,
+		callstackSize: defaultCallstackSize,
+	}
+
+	var pauVM *VM = InitVM(&flags)
+
+	pauVM.AddInstruction(INST_PUSH, 5)	
+	pauVM.AddInstruction(INST_STORE, 1)	
+	pauVM.AddInstruction(INST_LOAD, 1)	
+	pauVM.AddInstruction(INST_HALT, 0)	
+
+	pauVM.ExecuteProgram()
+
+	sp := pauVM.sp
+	result := pauVM.stack[sp]
+
+	if result != 5 { 
+		t.Errorf("Expected 5 got %d", result)
+	}
+}
+
+func TestCALL(t *testing.T) {
+	var flags VMFlags = VMFlags{
+		trace: false,
+		stackSize: defaultStackSize,
+		callstackSize: defaultCallstackSize,
+	}
+
+	var pauVM *VM = InitVM(&flags)
+
+	pauVM.AddInstruction(INST_PUSH, 5)	
+	pauVM.AddInstruction(INST_CALL, 3)	
+	pauVM.AddInstruction(INST_PUSH, 1)	
+
+	pauVM.AddInstruction(INST_PUSH, 2) //<-Function
+	pauVM.AddInstruction(INST_HALT, 0)	
+
+	pauVM.ExecuteProgram()
+
+	fp := pauVM.fp
+
+	if fp != 1 { 
+		t.Errorf("Expected 1 got %d", fp)
+	}
+}
+
+func TestRETURN(t *testing.T) {
+	var flags VMFlags = VMFlags{
+		trace: false,
+		stackSize: defaultStackSize,
+		callstackSize: defaultCallstackSize,
+	}
+
+	var pauVM *VM = InitVM(&flags)
+
+	pauVM.AddInstruction(INST_PUSH, 5)	
+	pauVM.AddInstruction(INST_CALL, 5)	
+	pauVM.AddInstruction(INST_PUSH, 1)	
+	pauVM.AddInstruction(INST_PUSH, 1)	
+	pauVM.AddInstruction(INST_PUSH, 1)	
+
+	pauVM.AddInstruction(INST_PUSH, 2) //<- Function
+	pauVM.AddInstruction(INST_RETURN, 0)
+	pauVM.AddInstruction(INST_HALT, 0)	
+
+	pauVM.ExecuteProgram()
+
+	fp := pauVM.fp
+
+	if fp != 0 { 
+		t.Errorf("Expected 1 got %d", fp)
+	}
+}
+
+func TestHALT(t *testing.T) {
+	var flags VMFlags = VMFlags{
+		trace: false,
+		stackSize: defaultStackSize,
+		callstackSize: defaultCallstackSize,
+	}
+
+	var pauVM *VM = InitVM(&flags)
+
+	pauVM.AddInstruction(INST_PUSH, 5)	
+	pauVM.AddInstruction(INST_HALT, 0)	
+	pauVM.AddInstruction(INST_PUSH, 1)	
+	pauVM.AddInstruction(INST_PUSH, 1)	
+	pauVM.AddInstruction(INST_PUSH, 2)
+
+	pauVM.ExecuteProgram()
+
+	sp := pauVM.sp
+	result := pauVM.stack[sp]
+
+	if result != 5 { 
+		t.Errorf("Expected 5 got %d", result)
+	}
+}
+
+func TestNONE(t *testing.T) {
+	var flags VMFlags = VMFlags{
+		trace: false,
+		stackSize: defaultStackSize,
+		callstackSize: defaultCallstackSize,
+	}
+
+	var pauVM *VM = InitVM(&flags)
+
+	pauVM.AddInstruction(INST_PUSH, 5)	
+
+	pauVM.AddInstruction(INST_NONE, 1)	
+	pauVM.AddInstruction(INST_NONE, 1)	
+	pauVM.AddInstruction(INST_NONE, 1)	
+	pauVM.AddInstruction(INST_NONE, 1)	
+	pauVM.AddInstruction(INST_NONE, 1)	
+	pauVM.AddInstruction(INST_NONE, 1)	
+	pauVM.AddInstruction(INST_NONE, 1)	
+
+	pauVM.AddInstruction(INST_HALT, 2)
 
 	pauVM.ExecuteProgram()
 

@@ -1,0 +1,7 @@
+#This is an example of how to use the local memory of the vm.
+
+main:
+ PUSH 124 #Push your value onto the stack.
+ STORE 1 #Store the pushed value in memory index 1.
+ LOAD 1 #Push the value from memory index 1 onto the stack.
+ HALT 

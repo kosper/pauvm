@@ -1,0 +1,25 @@
+#This is an example of a counter using Pauven Bytecode.
+#Comments start with the '#'
+
+#Includes files.
+!include ../examples/counter/counter_defines.pv
+!include ../examples/counter/counter_incex.pv
+
+main:
+  PUSH 0
+  #SYSCALL 0
+  
+  loop:
+    PUSH 1
+    ADD
+    
+    #Add the result to the stack and check if it is equal to 10.
+    DUP 
+    PUSH m #m is a definition.
+    EQ
+    
+    #If the result is 10 we terminate the program, otherwise we jump back to the loop label.
+    JMPZ p 
+    JMP loop
+  
+  RETURN
