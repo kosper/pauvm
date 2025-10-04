@@ -22,5 +22,5 @@ base_case:
   POP
   PUSH 1
 
-  #Returns to main(Remember not a function call).
+  #Returns to main(Remember, not a function call).
   RETURN

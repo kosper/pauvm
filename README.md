@@ -50,14 +50,18 @@ Source(examples/factorial.pau)
 
 ```
 #This program demonstrates the calculation of 5 factorial.
-PUSH 5
 
-CALL factorial
-HALT
+main:
+  PUSH 5
+  
+  CALL factorial
+  HALT
 
 factorial:
   DUP
-  JMPZ base_case
+
+  #This is not a function call, rather a way to demonstrate jumps.
+  JMPZ base_case 
   DUP
   PUSH 1
   MINUS
@@ -68,6 +72,8 @@ factorial:
 base_case:
   POP
   PUSH 1
+
+  #Returns to main(Remember, not a function call).
   RETURN
 ```
 
