@@ -4,9 +4,9 @@ WORKDIR /app
 COPY . .
 
 # Build all executables
-RUN go build -o /bin/ ./cmd/pauvm
-RUN go build -o /bin/ ./cmd/pauven
-RUN go build -o /bin/ ./cmd/paudiss
+RUN go build -trimpath -ldflags="-s -w" -o /bin/ ./cmd/pauvm
+RUN go build -trimpath -ldflags="-s -w" -o /bin/ ./cmd/pauven
+RUN go build -trimpath -ldflags="-s -w" -o /bin/ ./cmd/paudiss
 
 FROM alpine:3.19
 
