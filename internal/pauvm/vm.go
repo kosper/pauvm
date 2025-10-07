@@ -157,6 +157,18 @@ func InitVM(flags *VMFlags) *VM {
 	return &pauVM
 }
 
+//Note: Resets the VM.
+func (pauVM *VM)Reset() {
+	pauVM.ip = 0
+	pauVM.totalInstructions = 0
+	pauVM.sp = -1 
+	pauVM.fp = 0 
+
+	for i := range maxInstructions {
+		pauVM.program[i].inst = isa.INST_NONE
+	}
+}
+
 func (pauVM *VM) AddInstruction(inst isa.InstructionType, value int32) error {
 	if pauVM.totalInstructions >= maxInstructions {
 		return errors.New("Too many instructions!");

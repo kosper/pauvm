@@ -2,6 +2,7 @@ package isa
 
 type InstructionType byte
 
+//TODO: AND, OR, NOT, XOR
 const (
 	INST_PUSH InstructionType = iota
 	INST_POP

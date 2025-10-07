@@ -38,6 +38,7 @@ func IsFileExtension(filename string, extension string) error {
 	return errors.New(ferror)
 }
 
+//TODO: Move these inside isa/header.go
 func WriteHeader(fileoutput *os.File) error {
 	//Note: I do this so i can write header in one call instead of two.
 	var header [7]byte = [7]byte{ 

@@ -115,7 +115,7 @@ docker run --rm -v ./examples:/examples pauvm pauvm examples/counter/counter.pau
 
 ### Roadmap
 - [X] Documentation (IMPORTANT)
-- [ ] Unit Tests.
+- [X] Unit Tests.
 - [X] Linux build files(NOTE: exist but not commited yet).
 - [ ] Implement Debugger
 - [X] Support including files in source code
